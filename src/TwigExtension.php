@@ -25,13 +25,21 @@ class TwigExtension extends \Twig_Extension {
     return 'twig_function';
   }
 
-  public function templateFunction($ref = NULL, $id = 1) {
+  public function templateFunction($ref = NULL, $id = NULL, $name = NULL) {
+
     if($ref == 'block'){
       $block = \Drupal\block_content\Entity\BlockContent::load($id);
-      $render = \Drupal::entityTypeManager()->
-      getViewBuilder('block_content')->view($block);
+      $render = \Drupal::entityTypeManager()->getViewBuilder('block_content')->view($block);
       return $render;
     }
-    return 'template functions';
+
+    if($ref == 'view'){
+      $view = \Drupal\views\Views::getView($name);
+      $view->setDisplay($id);
+      $render = $view->render();
+      return $render;
+    }
+
+    return NULL;
   }
 }
